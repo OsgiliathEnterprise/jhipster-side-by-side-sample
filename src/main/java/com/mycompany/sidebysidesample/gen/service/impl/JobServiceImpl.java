@@ -3,8 +3,12 @@ package com.mycompany.sidebysidesample.gen.service.impl;
 import com.mycompany.sidebysidesample.gen.domain.Job;
 import com.mycompany.sidebysidesample.gen.repository.JobRepository;
 import com.mycompany.sidebysidesample.gen.service.JobService;
+import com.mycompany.sidebysidesample.gen.service.dto.JobDTO;
+import com.mycompany.sidebysidesample.gen.service.mapper.JobMapper;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,53 +28,53 @@ public class JobServiceImpl implements JobService {
 
     private final JobRepository jobRepository;
 
-    public JobServiceImpl(JobRepository jobRepository) {
+    private final JobMapper jobMapper;
+
+    public JobServiceImpl(JobRepository jobRepository, JobMapper jobMapper) {
         this.jobRepository = jobRepository;
+        this.jobMapper = jobMapper;
     }
 
     @Override
-    public Job save(Job job) {
-        LOG.debug("Request to save Job : {}", job);
-        return jobRepository.save(job);
+    public JobDTO save(JobDTO jobDTO) {
+        LOG.debug("Request to save Job : {}", jobDTO);
+        Job job = jobMapper.toEntity(jobDTO);
+        job = jobRepository.save(job);
+        return jobMapper.toDto(job);
     }
 
     @Override
-    public Job update(Job job) {
-        LOG.debug("Request to update Job : {}", job);
-        return jobRepository.save(job);
+    public JobDTO update(JobDTO jobDTO) {
+        LOG.debug("Request to update Job : {}", jobDTO);
+        Job job = jobMapper.toEntity(jobDTO);
+        job = jobRepository.save(job);
+        return jobMapper.toDto(job);
     }
 
     @Override
-    public Optional<Job> partialUpdate(Job job) {
-        LOG.debug("Request to partially update Job : {}", job);
+    public Optional<JobDTO> partialUpdate(JobDTO jobDTO) {
+        LOG.debug("Request to partially update Job : {}", jobDTO);
 
         return jobRepository
-            .findById(job.getId())
+            .findById(jobDTO.getId())
             .map(existingJob -> {
-                if (job.getJobTitle() != null) {
-                    existingJob.setJobTitle(job.getJobTitle());
-                }
-                if (job.getMinSalary() != null) {
-                    existingJob.setMinSalary(job.getMinSalary());
-                }
-                if (job.getMaxSalary() != null) {
-                    existingJob.setMaxSalary(job.getMaxSalary());
-                }
+                jobMapper.partialUpdate(existingJob, jobDTO);
 
                 return existingJob;
             })
-            .map(jobRepository::save);
+            .map(jobRepository::save)
+            .map(jobMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Job> findAll() {
+    public List<JobDTO> findAll() {
         LOG.debug("Request to get all Jobs");
-        return jobRepository.findAll();
+        return jobRepository.findAll().stream().map(jobMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
-    public Page<Job> findAllWithEagerRelationships(Pageable pageable) {
-        return jobRepository.findAllWithEagerRelationships(pageable);
+    public Page<JobDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return jobRepository.findAllWithEagerRelationships(pageable).map(jobMapper::toDto);
     }
 
     /**
@@ -78,16 +82,19 @@ public class JobServiceImpl implements JobService {
      *  @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Job> findAllWhereJobHistoryIsNull() {
+    public List<JobDTO> findAllWhereJobHistoryIsNull() {
         LOG.debug("Request to get all jobs where JobHistory is null");
-        return StreamSupport.stream(jobRepository.findAll().spliterator(), false).filter(job -> job.getJobHistory() == null).toList();
+        return StreamSupport.stream(jobRepository.findAll().spliterator(), false)
+            .filter(job -> job.getJobHistory() == null)
+            .map(jobMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Job> findOne(Long id) {
+    public Optional<JobDTO> findOne(Long id) {
         LOG.debug("Request to get Job : {}", id);
-        return jobRepository.findOneWithEagerRelationships(id);
+        return jobRepository.findOneWithEagerRelationships(id).map(jobMapper::toDto);
     }
 
     @Override

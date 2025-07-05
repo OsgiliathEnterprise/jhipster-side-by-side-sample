@@ -3,8 +3,12 @@ package com.mycompany.sidebysidesample.gen.service.impl;
 import com.mycompany.sidebysidesample.gen.domain.Department;
 import com.mycompany.sidebysidesample.gen.repository.DepartmentRepository;
 import com.mycompany.sidebysidesample.gen.service.DepartmentService;
+import com.mycompany.sidebysidesample.gen.service.dto.DepartmentDTO;
+import com.mycompany.sidebysidesample.gen.service.mapper.DepartmentMapper;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,43 +26,49 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
 
-    public DepartmentServiceImpl(DepartmentRepository departmentRepository) {
+    private final DepartmentMapper departmentMapper;
+
+    public DepartmentServiceImpl(DepartmentRepository departmentRepository, DepartmentMapper departmentMapper) {
         this.departmentRepository = departmentRepository;
+        this.departmentMapper = departmentMapper;
     }
 
     @Override
-    public Department save(Department department) {
-        LOG.debug("Request to save Department : {}", department);
-        return departmentRepository.save(department);
+    public DepartmentDTO save(DepartmentDTO departmentDTO) {
+        LOG.debug("Request to save Department : {}", departmentDTO);
+        Department department = departmentMapper.toEntity(departmentDTO);
+        department = departmentRepository.save(department);
+        return departmentMapper.toDto(department);
     }
 
     @Override
-    public Department update(Department department) {
-        LOG.debug("Request to update Department : {}", department);
-        return departmentRepository.save(department);
+    public DepartmentDTO update(DepartmentDTO departmentDTO) {
+        LOG.debug("Request to update Department : {}", departmentDTO);
+        Department department = departmentMapper.toEntity(departmentDTO);
+        department = departmentRepository.save(department);
+        return departmentMapper.toDto(department);
     }
 
     @Override
-    public Optional<Department> partialUpdate(Department department) {
-        LOG.debug("Request to partially update Department : {}", department);
+    public Optional<DepartmentDTO> partialUpdate(DepartmentDTO departmentDTO) {
+        LOG.debug("Request to partially update Department : {}", departmentDTO);
 
         return departmentRepository
-            .findById(department.getId())
+            .findById(departmentDTO.getId())
             .map(existingDepartment -> {
-                if (department.getDepartmentName() != null) {
-                    existingDepartment.setDepartmentName(department.getDepartmentName());
-                }
+                departmentMapper.partialUpdate(existingDepartment, departmentDTO);
 
                 return existingDepartment;
             })
-            .map(departmentRepository::save);
+            .map(departmentRepository::save)
+            .map(departmentMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Department> findAll() {
+    public List<DepartmentDTO> findAll() {
         LOG.debug("Request to get all Departments");
-        return departmentRepository.findAll();
+        return departmentRepository.findAll().stream().map(departmentMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -66,18 +76,19 @@ public class DepartmentServiceImpl implements DepartmentService {
      *  @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Department> findAllWhereJobHistoryIsNull() {
+    public List<DepartmentDTO> findAllWhereJobHistoryIsNull() {
         LOG.debug("Request to get all departments where JobHistory is null");
         return StreamSupport.stream(departmentRepository.findAll().spliterator(), false)
             .filter(department -> department.getJobHistory() == null)
-            .toList();
+            .map(departmentMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Department> findOne(Long id) {
+    public Optional<DepartmentDTO> findOne(Long id) {
         LOG.debug("Request to get Department : {}", id);
-        return departmentRepository.findById(id);
+        return departmentRepository.findById(id).map(departmentMapper::toDto);
     }
 
     @Override

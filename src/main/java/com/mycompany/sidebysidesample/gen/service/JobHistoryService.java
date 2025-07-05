@@ -1,6 +1,6 @@
 package com.mycompany.sidebysidesample.gen.service;
 
-import com.mycompany.sidebysidesample.gen.domain.JobHistory;
+import com.mycompany.sidebysidesample.gen.service.dto.JobHistoryDTO;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,33 +11,33 @@ public interface JobHistoryService {
     /**
      * Save a jobHistory.
      *
-     * @param jobHistory the entity to save.
+     * @param jobHistoryDTO the entity to save.
      * @return the persisted entity.
      */
-    JobHistory save(JobHistory jobHistory);
+    JobHistoryDTO save(JobHistoryDTO jobHistoryDTO);
 
     /**
      * Updates a jobHistory.
      *
-     * @param jobHistory the entity to update.
+     * @param jobHistoryDTO the entity to update.
      * @return the persisted entity.
      */
-    JobHistory update(JobHistory jobHistory);
+    JobHistoryDTO update(JobHistoryDTO jobHistoryDTO);
 
     /**
      * Partially updates a jobHistory.
      *
-     * @param jobHistory the entity to update partially.
+     * @param jobHistoryDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<JobHistory> partialUpdate(JobHistory jobHistory);
+    Optional<JobHistoryDTO> partialUpdate(JobHistoryDTO jobHistoryDTO);
 
     /**
      * Get all the jobHistories.
      *
      * @return the list of entities.
      */
-    List<JobHistory> findAll();
+    List<JobHistoryDTO> findAll();
 
     /**
      * Get the "id" jobHistory.
@@ -45,7 +45,7 @@ public interface JobHistoryService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<JobHistory> findOne(Long id);
+    Optional<JobHistoryDTO> findOne(Long id);
 
     /**
      * Delete the "id" jobHistory.

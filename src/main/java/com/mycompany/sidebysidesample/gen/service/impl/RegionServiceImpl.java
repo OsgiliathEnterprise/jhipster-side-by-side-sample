@@ -3,8 +3,12 @@ package com.mycompany.sidebysidesample.gen.service.impl;
 import com.mycompany.sidebysidesample.gen.domain.Region;
 import com.mycompany.sidebysidesample.gen.repository.RegionRepository;
 import com.mycompany.sidebysidesample.gen.service.RegionService;
+import com.mycompany.sidebysidesample.gen.service.dto.RegionDTO;
+import com.mycompany.sidebysidesample.gen.service.mapper.RegionMapper;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,43 +26,49 @@ public class RegionServiceImpl implements RegionService {
 
     private final RegionRepository regionRepository;
 
-    public RegionServiceImpl(RegionRepository regionRepository) {
+    private final RegionMapper regionMapper;
+
+    public RegionServiceImpl(RegionRepository regionRepository, RegionMapper regionMapper) {
         this.regionRepository = regionRepository;
+        this.regionMapper = regionMapper;
     }
 
     @Override
-    public Region save(Region region) {
-        LOG.debug("Request to save Region : {}", region);
-        return regionRepository.save(region);
+    public RegionDTO save(RegionDTO regionDTO) {
+        LOG.debug("Request to save Region : {}", regionDTO);
+        Region region = regionMapper.toEntity(regionDTO);
+        region = regionRepository.save(region);
+        return regionMapper.toDto(region);
     }
 
     @Override
-    public Region update(Region region) {
-        LOG.debug("Request to update Region : {}", region);
-        return regionRepository.save(region);
+    public RegionDTO update(RegionDTO regionDTO) {
+        LOG.debug("Request to update Region : {}", regionDTO);
+        Region region = regionMapper.toEntity(regionDTO);
+        region = regionRepository.save(region);
+        return regionMapper.toDto(region);
     }
 
     @Override
-    public Optional<Region> partialUpdate(Region region) {
-        LOG.debug("Request to partially update Region : {}", region);
+    public Optional<RegionDTO> partialUpdate(RegionDTO regionDTO) {
+        LOG.debug("Request to partially update Region : {}", regionDTO);
 
         return regionRepository
-            .findById(region.getId())
+            .findById(regionDTO.getId())
             .map(existingRegion -> {
-                if (region.getRegionName() != null) {
-                    existingRegion.setRegionName(region.getRegionName());
-                }
+                regionMapper.partialUpdate(existingRegion, regionDTO);
 
                 return existingRegion;
             })
-            .map(regionRepository::save);
+            .map(regionRepository::save)
+            .map(regionMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Region> findAll() {
+    public List<RegionDTO> findAll() {
         LOG.debug("Request to get all Regions");
-        return regionRepository.findAll();
+        return regionRepository.findAll().stream().map(regionMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -66,16 +76,19 @@ public class RegionServiceImpl implements RegionService {
      *  @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Region> findAllWhereCountryIsNull() {
+    public List<RegionDTO> findAllWhereCountryIsNull() {
         LOG.debug("Request to get all regions where Country is null");
-        return StreamSupport.stream(regionRepository.findAll().spliterator(), false).filter(region -> region.getCountry() == null).toList();
+        return StreamSupport.stream(regionRepository.findAll().spliterator(), false)
+            .filter(region -> region.getCountry() == null)
+            .map(regionMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Region> findOne(Long id) {
+    public Optional<RegionDTO> findOne(Long id) {
         LOG.debug("Request to get Region : {}", id);
-        return regionRepository.findById(id);
+        return regionRepository.findById(id).map(regionMapper::toDto);
     }
 
     @Override

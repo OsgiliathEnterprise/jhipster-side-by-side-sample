@@ -14,6 +14,8 @@ import com.mycompany.sidebysidesample.gen.IntegrationTest;
 import com.mycompany.sidebysidesample.gen.domain.Job;
 import com.mycompany.sidebysidesample.gen.repository.JobRepository;
 import com.mycompany.sidebysidesample.gen.service.JobService;
+import com.mycompany.sidebysidesample.gen.service.dto.JobDTO;
+import com.mycompany.sidebysidesample.gen.service.mapper.JobMapper;
 import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Random;
@@ -66,6 +68,9 @@ class JobResourceIT {
     @Mock
     private JobRepository jobRepositoryMock;
 
+    @Autowired
+    private JobMapper jobMapper;
+
     @Mock
     private JobService jobServiceMock;
 
@@ -117,18 +122,20 @@ class JobResourceIT {
     void createJob() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Job
-        var returnedJob = om.readValue(
+        JobDTO jobDTO = jobMapper.toDto(job);
+        var returnedJobDTO = om.readValue(
             restJobMockMvc
-                .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(job)))
+                .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(jobDTO)))
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString(),
-            Job.class
+            JobDTO.class
         );
 
         // Validate the Job in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedJob = jobMapper.toEntity(returnedJobDTO);
         assertJobUpdatableFieldsEquals(returnedJob, getPersistedJob(returnedJob));
 
         insertedJob = returnedJob;
@@ -139,12 +146,13 @@ class JobResourceIT {
     void createJobWithExistingId() throws Exception {
         // Create the Job with an existing ID
         job.setId(1L);
+        JobDTO jobDTO = jobMapper.toDto(job);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restJobMockMvc
-            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(job)))
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(jobDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Job in the database
@@ -222,13 +230,14 @@ class JobResourceIT {
         // Disconnect from session so that the updates on updatedJob are not directly saved in db
         em.detach(updatedJob);
         updatedJob.jobTitle(UPDATED_JOB_TITLE).minSalary(UPDATED_MIN_SALARY).maxSalary(UPDATED_MAX_SALARY);
+        JobDTO jobDTO = jobMapper.toDto(updatedJob);
 
         restJobMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedJob.getId())
+                put(ENTITY_API_URL_ID, jobDTO.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(updatedJob))
+                    .content(om.writeValueAsBytes(jobDTO))
             )
             .andExpect(status().isOk());
 
@@ -243,10 +252,16 @@ class JobResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         job.setId(longCount.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, job.getId()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(job))
+                put(ENTITY_API_URL_ID, jobDTO.getId())
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(om.writeValueAsBytes(jobDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -260,13 +275,16 @@ class JobResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         job.setId(longCount.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(job))
+                    .content(om.writeValueAsBytes(jobDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -280,9 +298,12 @@ class JobResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         job.setId(longCount.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
-            .perform(put(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(job)))
+            .perform(put(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(jobDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Job in the database
@@ -353,13 +374,16 @@ class JobResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         job.setId(longCount.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, job.getId())
+                patch(ENTITY_API_URL_ID, jobDTO.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(job))
+                    .content(om.writeValueAsBytes(jobDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -373,13 +397,16 @@ class JobResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         job.setId(longCount.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(job))
+                    .content(om.writeValueAsBytes(jobDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -393,9 +420,12 @@ class JobResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         job.setId(longCount.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
-            .perform(patch(ENTITY_API_URL).with(csrf()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(job)))
+            .perform(patch(ENTITY_API_URL).with(csrf()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(jobDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Job in the database

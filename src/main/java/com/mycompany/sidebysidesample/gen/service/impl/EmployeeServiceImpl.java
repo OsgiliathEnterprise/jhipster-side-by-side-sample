@@ -3,8 +3,12 @@ package com.mycompany.sidebysidesample.gen.service.impl;
 import com.mycompany.sidebysidesample.gen.domain.Employee;
 import com.mycompany.sidebysidesample.gen.repository.EmployeeRepository;
 import com.mycompany.sidebysidesample.gen.service.EmployeeService;
+import com.mycompany.sidebysidesample.gen.service.dto.EmployeeDTO;
+import com.mycompany.sidebysidesample.gen.service.mapper.EmployeeMapper;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,61 +26,49 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+    private final EmployeeMapper employeeMapper;
+
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper) {
         this.employeeRepository = employeeRepository;
+        this.employeeMapper = employeeMapper;
     }
 
     @Override
-    public Employee save(Employee employee) {
-        LOG.debug("Request to save Employee : {}", employee);
-        return employeeRepository.save(employee);
+    public EmployeeDTO save(EmployeeDTO employeeDTO) {
+        LOG.debug("Request to save Employee : {}", employeeDTO);
+        Employee employee = employeeMapper.toEntity(employeeDTO);
+        employee = employeeRepository.save(employee);
+        return employeeMapper.toDto(employee);
     }
 
     @Override
-    public Employee update(Employee employee) {
-        LOG.debug("Request to update Employee : {}", employee);
-        return employeeRepository.save(employee);
+    public EmployeeDTO update(EmployeeDTO employeeDTO) {
+        LOG.debug("Request to update Employee : {}", employeeDTO);
+        Employee employee = employeeMapper.toEntity(employeeDTO);
+        employee = employeeRepository.save(employee);
+        return employeeMapper.toDto(employee);
     }
 
     @Override
-    public Optional<Employee> partialUpdate(Employee employee) {
-        LOG.debug("Request to partially update Employee : {}", employee);
+    public Optional<EmployeeDTO> partialUpdate(EmployeeDTO employeeDTO) {
+        LOG.debug("Request to partially update Employee : {}", employeeDTO);
 
         return employeeRepository
-            .findById(employee.getId())
+            .findById(employeeDTO.getId())
             .map(existingEmployee -> {
-                if (employee.getFirstName() != null) {
-                    existingEmployee.setFirstName(employee.getFirstName());
-                }
-                if (employee.getLastName() != null) {
-                    existingEmployee.setLastName(employee.getLastName());
-                }
-                if (employee.getEmail() != null) {
-                    existingEmployee.setEmail(employee.getEmail());
-                }
-                if (employee.getPhoneNumber() != null) {
-                    existingEmployee.setPhoneNumber(employee.getPhoneNumber());
-                }
-                if (employee.getHireDate() != null) {
-                    existingEmployee.setHireDate(employee.getHireDate());
-                }
-                if (employee.getSalary() != null) {
-                    existingEmployee.setSalary(employee.getSalary());
-                }
-                if (employee.getCommissionPct() != null) {
-                    existingEmployee.setCommissionPct(employee.getCommissionPct());
-                }
+                employeeMapper.partialUpdate(existingEmployee, employeeDTO);
 
                 return existingEmployee;
             })
-            .map(employeeRepository::save);
+            .map(employeeRepository::save)
+            .map(employeeMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Employee> findAll() {
+    public List<EmployeeDTO> findAll() {
         LOG.debug("Request to get all Employees");
-        return employeeRepository.findAll();
+        return employeeRepository.findAll().stream().map(employeeMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -84,18 +76,19 @@ public class EmployeeServiceImpl implements EmployeeService {
      *  @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Employee> findAllWhereJobHistoryIsNull() {
+    public List<EmployeeDTO> findAllWhereJobHistoryIsNull() {
         LOG.debug("Request to get all employees where JobHistory is null");
         return StreamSupport.stream(employeeRepository.findAll().spliterator(), false)
             .filter(employee -> employee.getJobHistory() == null)
-            .toList();
+            .map(employeeMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Employee> findOne(Long id) {
+    public Optional<EmployeeDTO> findOne(Long id) {
         LOG.debug("Request to get Employee : {}", id);
-        return employeeRepository.findById(id);
+        return employeeRepository.findById(id).map(employeeMapper::toDto);
     }
 
     @Override

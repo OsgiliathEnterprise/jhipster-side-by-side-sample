@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Country Management Delete Component" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
+    <node-interpreter value="project" />
+    <jest-package value="$PROJECT_DIR$/node_modules/@angular/cli" />
+    <working-dir value="$PROJECT_DIR$" />
+    <envs />
+    <scope-kind value="SUITE" />
+    <test-file value="$PROJECT_DIR$/src/main/webapp/app/entities/gen/country/delete/country-delete-dialog.component.spec.ts" />
+    <test-names>
+      <test-name value="Country Management Delete Component" />
+    </test-names>
+    <method v="2" />
+  </configuration>
+</component>

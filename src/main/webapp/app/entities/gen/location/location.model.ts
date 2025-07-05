@@ -6,7 +6,7 @@ export interface ILocation {
   postalCode?: string | null;
   city?: string | null;
   stateProvince?: string | null;
-  country?: ICountry | null;
+  country?: Pick<ICountry, 'id'> | null;
 }
 
 export type NewLocation = Omit<ILocation, 'id'> & { id: null };

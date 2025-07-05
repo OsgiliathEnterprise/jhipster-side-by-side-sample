@@ -3,8 +3,12 @@ package com.mycompany.sidebysidesample.gen.service.impl;
 import com.mycompany.sidebysidesample.gen.domain.Location;
 import com.mycompany.sidebysidesample.gen.repository.LocationRepository;
 import com.mycompany.sidebysidesample.gen.service.LocationService;
+import com.mycompany.sidebysidesample.gen.service.dto.LocationDTO;
+import com.mycompany.sidebysidesample.gen.service.mapper.LocationMapper;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,52 +26,49 @@ public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
 
-    public LocationServiceImpl(LocationRepository locationRepository) {
+    private final LocationMapper locationMapper;
+
+    public LocationServiceImpl(LocationRepository locationRepository, LocationMapper locationMapper) {
         this.locationRepository = locationRepository;
+        this.locationMapper = locationMapper;
     }
 
     @Override
-    public Location save(Location location) {
-        LOG.debug("Request to save Location : {}", location);
-        return locationRepository.save(location);
+    public LocationDTO save(LocationDTO locationDTO) {
+        LOG.debug("Request to save Location : {}", locationDTO);
+        Location location = locationMapper.toEntity(locationDTO);
+        location = locationRepository.save(location);
+        return locationMapper.toDto(location);
     }
 
     @Override
-    public Location update(Location location) {
-        LOG.debug("Request to update Location : {}", location);
-        return locationRepository.save(location);
+    public LocationDTO update(LocationDTO locationDTO) {
+        LOG.debug("Request to update Location : {}", locationDTO);
+        Location location = locationMapper.toEntity(locationDTO);
+        location = locationRepository.save(location);
+        return locationMapper.toDto(location);
     }
 
     @Override
-    public Optional<Location> partialUpdate(Location location) {
-        LOG.debug("Request to partially update Location : {}", location);
+    public Optional<LocationDTO> partialUpdate(LocationDTO locationDTO) {
+        LOG.debug("Request to partially update Location : {}", locationDTO);
 
         return locationRepository
-            .findById(location.getId())
+            .findById(locationDTO.getId())
             .map(existingLocation -> {
-                if (location.getStreetAddress() != null) {
-                    existingLocation.setStreetAddress(location.getStreetAddress());
-                }
-                if (location.getPostalCode() != null) {
-                    existingLocation.setPostalCode(location.getPostalCode());
-                }
-                if (location.getCity() != null) {
-                    existingLocation.setCity(location.getCity());
-                }
-                if (location.getStateProvince() != null) {
-                    existingLocation.setStateProvince(location.getStateProvince());
-                }
+                locationMapper.partialUpdate(existingLocation, locationDTO);
 
                 return existingLocation;
             })
-            .map(locationRepository::save);
+            .map(locationRepository::save)
+            .map(locationMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Location> findAll() {
+    public List<LocationDTO> findAll() {
         LOG.debug("Request to get all Locations");
-        return locationRepository.findAll();
+        return locationRepository.findAll().stream().map(locationMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -75,18 +76,19 @@ public class LocationServiceImpl implements LocationService {
      *  @return the list of entities.
      */
     @Transactional(readOnly = true)
-    public List<Location> findAllWhereDepartmentIsNull() {
+    public List<LocationDTO> findAllWhereDepartmentIsNull() {
         LOG.debug("Request to get all locations where Department is null");
         return StreamSupport.stream(locationRepository.findAll().spliterator(), false)
             .filter(location -> location.getDepartment() == null)
-            .toList();
+            .map(locationMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Location> findOne(Long id) {
+    public Optional<LocationDTO> findOne(Long id) {
         LOG.debug("Request to get Location : {}", id);
-        return locationRepository.findById(id);
+        return locationRepository.findById(id).map(locationMapper::toDto);
     }
 
     @Override

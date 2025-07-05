@@ -13,6 +13,8 @@ import com.mycompany.sidebysidesample.gen.IntegrationTest;
 import com.mycompany.sidebysidesample.gen.domain.Country;
 import com.mycompany.sidebysidesample.gen.domain.Location;
 import com.mycompany.sidebysidesample.gen.repository.LocationRepository;
+import com.mycompany.sidebysidesample.gen.service.dto.LocationDTO;
+import com.mycompany.sidebysidesample.gen.service.mapper.LocationMapper;
 import jakarta.persistence.EntityManager;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
@@ -57,6 +59,9 @@ class LocationResourceIT {
 
     @Autowired
     private LocationRepository locationRepository;
+
+    @Autowired
+    private LocationMapper locationMapper;
 
     @Autowired
     private EntityManager em;
@@ -136,18 +141,22 @@ class LocationResourceIT {
     void createLocation() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
         // Create the Location
-        var returnedLocation = om.readValue(
+        LocationDTO locationDTO = locationMapper.toDto(location);
+        var returnedLocationDTO = om.readValue(
             restLocationMockMvc
-                .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(location)))
+                .perform(
+                    post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(locationDTO))
+                )
                 .andExpect(status().isCreated())
                 .andReturn()
                 .getResponse()
                 .getContentAsString(),
-            Location.class
+            LocationDTO.class
         );
 
         // Validate the Location in the database
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
+        var returnedLocation = locationMapper.toEntity(returnedLocationDTO);
         assertLocationUpdatableFieldsEquals(returnedLocation, getPersistedLocation(returnedLocation));
 
         insertedLocation = returnedLocation;
@@ -158,12 +167,13 @@ class LocationResourceIT {
     void createLocationWithExistingId() throws Exception {
         // Create the Location with an existing ID
         location.setId(1L);
+        LocationDTO locationDTO = locationMapper.toDto(location);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restLocationMockMvc
-            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(location)))
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(locationDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Location in the database
@@ -230,13 +240,14 @@ class LocationResourceIT {
             .postalCode(UPDATED_POSTAL_CODE)
             .city(UPDATED_CITY)
             .stateProvince(UPDATED_STATE_PROVINCE);
+        LocationDTO locationDTO = locationMapper.toDto(updatedLocation);
 
         restLocationMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedLocation.getId())
+                put(ENTITY_API_URL_ID, locationDTO.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(updatedLocation))
+                    .content(om.writeValueAsBytes(locationDTO))
             )
             .andExpect(status().isOk());
 
@@ -251,13 +262,16 @@ class LocationResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLocationMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, location.getId())
+                put(ENTITY_API_URL_ID, locationDTO.getId())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(location))
+                    .content(om.writeValueAsBytes(locationDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -271,13 +285,16 @@ class LocationResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLocationMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(location))
+                    .content(om.writeValueAsBytes(locationDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -291,9 +308,12 @@ class LocationResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLocationMockMvc
-            .perform(put(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(location)))
+            .perform(put(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(locationDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Location in the database
@@ -368,13 +388,16 @@ class LocationResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLocationMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, location.getId())
+                patch(ENTITY_API_URL_ID, locationDTO.getId())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(location))
+                    .content(om.writeValueAsBytes(locationDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -388,13 +411,16 @@ class LocationResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLocationMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, longCount.incrementAndGet())
                     .with(csrf())
                     .contentType("application/merge-patch+json")
-                    .content(om.writeValueAsBytes(location))
+                    .content(om.writeValueAsBytes(locationDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -408,9 +434,14 @@ class LocationResourceIT {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         location.setId(longCount.incrementAndGet());
 
+        // Create the Location
+        LocationDTO locationDTO = locationMapper.toDto(location);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLocationMockMvc
-            .perform(patch(ENTITY_API_URL).with(csrf()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(location)))
+            .perform(
+                patch(ENTITY_API_URL).with(csrf()).contentType("application/merge-patch+json").content(om.writeValueAsBytes(locationDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Location in the database

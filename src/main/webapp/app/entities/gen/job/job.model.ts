@@ -6,8 +6,8 @@ export interface IJob {
   jobTitle?: string | null;
   minSalary?: number | null;
   maxSalary?: number | null;
-  employee?: IEmployee | null;
-  tasks?: ITask[] | null;
+  employee?: Pick<IEmployee, 'id'> | null;
+  tasks?: Pick<ITask, 'id'>[] | null;
 }
 
 export type NewJob = Omit<IJob, 'id'> & { id: null };

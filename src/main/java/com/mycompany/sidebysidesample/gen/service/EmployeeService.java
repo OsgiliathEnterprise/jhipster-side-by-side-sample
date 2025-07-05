@@ -1,6 +1,6 @@
 package com.mycompany.sidebysidesample.gen.service;
 
-import com.mycompany.sidebysidesample.gen.domain.Employee;
+import com.mycompany.sidebysidesample.gen.service.dto.EmployeeDTO;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,40 +11,40 @@ public interface EmployeeService {
     /**
      * Save a employee.
      *
-     * @param employee the entity to save.
+     * @param employeeDTO the entity to save.
      * @return the persisted entity.
      */
-    Employee save(Employee employee);
+    EmployeeDTO save(EmployeeDTO employeeDTO);
 
     /**
      * Updates a employee.
      *
-     * @param employee the entity to update.
+     * @param employeeDTO the entity to update.
      * @return the persisted entity.
      */
-    Employee update(Employee employee);
+    EmployeeDTO update(EmployeeDTO employeeDTO);
 
     /**
      * Partially updates a employee.
      *
-     * @param employee the entity to update partially.
+     * @param employeeDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Employee> partialUpdate(Employee employee);
+    Optional<EmployeeDTO> partialUpdate(EmployeeDTO employeeDTO);
 
     /**
      * Get all the employees.
      *
      * @return the list of entities.
      */
-    List<Employee> findAll();
+    List<EmployeeDTO> findAll();
 
     /**
-     * Get all the Employee where JobHistory is {@code null}.
+     * Get all the EmployeeDTO where JobHistory is {@code null}.
      *
      * @return the {@link List} of entities.
      */
-    List<Employee> findAllWhereJobHistoryIsNull();
+    List<EmployeeDTO> findAllWhereJobHistoryIsNull();
 
     /**
      * Get the "id" employee.
@@ -52,7 +52,7 @@ public interface EmployeeService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Employee> findOne(Long id);
+    Optional<EmployeeDTO> findOne(Long id);
 
     /**
      * Delete the "id" employee.

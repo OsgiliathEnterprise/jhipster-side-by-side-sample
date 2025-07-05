@@ -4,6 +4,7 @@
   },
   "applications": ["sidebysidesample"],
   "clientRootFolder": "gen",
+  "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "firstName",

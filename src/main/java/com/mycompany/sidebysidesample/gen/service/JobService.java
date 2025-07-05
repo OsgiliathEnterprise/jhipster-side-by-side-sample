@@ -1,6 +1,6 @@
 package com.mycompany.sidebysidesample.gen.service;
 
-import com.mycompany.sidebysidesample.gen.domain.Job;
+import com.mycompany.sidebysidesample.gen.service.dto.JobDTO;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -13,40 +13,40 @@ public interface JobService {
     /**
      * Save a job.
      *
-     * @param job the entity to save.
+     * @param jobDTO the entity to save.
      * @return the persisted entity.
      */
-    Job save(Job job);
+    JobDTO save(JobDTO jobDTO);
 
     /**
      * Updates a job.
      *
-     * @param job the entity to update.
+     * @param jobDTO the entity to update.
      * @return the persisted entity.
      */
-    Job update(Job job);
+    JobDTO update(JobDTO jobDTO);
 
     /**
      * Partially updates a job.
      *
-     * @param job the entity to update partially.
+     * @param jobDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Job> partialUpdate(Job job);
+    Optional<JobDTO> partialUpdate(JobDTO jobDTO);
 
     /**
      * Get all the jobs.
      *
      * @return the list of entities.
      */
-    List<Job> findAll();
+    List<JobDTO> findAll();
 
     /**
-     * Get all the Job where JobHistory is {@code null}.
+     * Get all the JobDTO where JobHistory is {@code null}.
      *
      * @return the {@link List} of entities.
      */
-    List<Job> findAllWhereJobHistoryIsNull();
+    List<JobDTO> findAllWhereJobHistoryIsNull();
 
     /**
      * Get all the jobs with eager load of many-to-many relationships.
@@ -54,7 +54,7 @@ public interface JobService {
      * @param pageable the pagination information.
      * @return the list of entities.
      */
-    Page<Job> findAllWithEagerRelationships(Pageable pageable);
+    Page<JobDTO> findAllWithEagerRelationships(Pageable pageable);
 
     /**
      * Get the "id" job.
@@ -62,7 +62,7 @@ public interface JobService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Job> findOne(Long id);
+    Optional<JobDTO> findOne(Long id);
 
     /**
      * Delete the "id" job.

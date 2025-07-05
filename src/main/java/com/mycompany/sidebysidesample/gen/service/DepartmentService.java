@@ -1,6 +1,6 @@
 package com.mycompany.sidebysidesample.gen.service;
 
-import com.mycompany.sidebysidesample.gen.domain.Department;
+import com.mycompany.sidebysidesample.gen.service.dto.DepartmentDTO;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,40 +11,40 @@ public interface DepartmentService {
     /**
      * Save a department.
      *
-     * @param department the entity to save.
+     * @param departmentDTO the entity to save.
      * @return the persisted entity.
      */
-    Department save(Department department);
+    DepartmentDTO save(DepartmentDTO departmentDTO);
 
     /**
      * Updates a department.
      *
-     * @param department the entity to update.
+     * @param departmentDTO the entity to update.
      * @return the persisted entity.
      */
-    Department update(Department department);
+    DepartmentDTO update(DepartmentDTO departmentDTO);
 
     /**
      * Partially updates a department.
      *
-     * @param department the entity to update partially.
+     * @param departmentDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Department> partialUpdate(Department department);
+    Optional<DepartmentDTO> partialUpdate(DepartmentDTO departmentDTO);
 
     /**
      * Get all the departments.
      *
      * @return the list of entities.
      */
-    List<Department> findAll();
+    List<DepartmentDTO> findAll();
 
     /**
-     * Get all the Department where JobHistory is {@code null}.
+     * Get all the DepartmentDTO where JobHistory is {@code null}.
      *
      * @return the {@link List} of entities.
      */
-    List<Department> findAllWhereJobHistoryIsNull();
+    List<DepartmentDTO> findAllWhereJobHistoryIsNull();
 
     /**
      * Get the "id" department.
@@ -52,7 +52,7 @@ public interface DepartmentService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Department> findOne(Long id);
+    Optional<DepartmentDTO> findOne(Long id);
 
     /**
      * Delete the "id" department.

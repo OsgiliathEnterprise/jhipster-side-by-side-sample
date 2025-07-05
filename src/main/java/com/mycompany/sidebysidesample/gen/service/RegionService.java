@@ -1,6 +1,6 @@
 package com.mycompany.sidebysidesample.gen.service;
 
-import com.mycompany.sidebysidesample.gen.domain.Region;
+import com.mycompany.sidebysidesample.gen.service.dto.RegionDTO;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,40 +11,40 @@ public interface RegionService {
     /**
      * Save a region.
      *
-     * @param region the entity to save.
+     * @param regionDTO the entity to save.
      * @return the persisted entity.
      */
-    Region save(Region region);
+    RegionDTO save(RegionDTO regionDTO);
 
     /**
      * Updates a region.
      *
-     * @param region the entity to update.
+     * @param regionDTO the entity to update.
      * @return the persisted entity.
      */
-    Region update(Region region);
+    RegionDTO update(RegionDTO regionDTO);
 
     /**
      * Partially updates a region.
      *
-     * @param region the entity to update partially.
+     * @param regionDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Region> partialUpdate(Region region);
+    Optional<RegionDTO> partialUpdate(RegionDTO regionDTO);
 
     /**
      * Get all the regions.
      *
      * @return the list of entities.
      */
-    List<Region> findAll();
+    List<RegionDTO> findAll();
 
     /**
-     * Get all the Region where Country is {@code null}.
+     * Get all the RegionDTO where Country is {@code null}.
      *
      * @return the {@link List} of entities.
      */
-    List<Region> findAllWhereCountryIsNull();
+    List<RegionDTO> findAllWhereCountryIsNull();
 
     /**
      * Get the "id" region.
@@ -52,7 +52,7 @@ public interface RegionService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Region> findOne(Long id);
+    Optional<RegionDTO> findOne(Long id);
 
     /**
      * Delete the "id" region.

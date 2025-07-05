@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="DepartmentResourceIT" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+    <module name="sidebysidesample" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.mycompany.sidebysidesample.gen.web.rest.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="PACKAGE_NAME" value="com.mycompany.sidebysidesample.gen.web.rest" />
+    <option name="MAIN_CLASS_NAME" value="com.mycompany.sidebysidesample.gen.web.rest.DepartmentResourceIT" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="class" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
