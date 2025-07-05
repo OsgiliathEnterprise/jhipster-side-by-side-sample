@@ -1,0 +1,11 @@
+meta {
+  name: EmployeesWithDepartments
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{LOCAL_BACKEND}}/api/v1/employeeswithdepartment
+  body: none
+  auth: inherit
+}

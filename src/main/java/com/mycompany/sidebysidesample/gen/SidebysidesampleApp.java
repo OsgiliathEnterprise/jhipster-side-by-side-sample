@@ -16,12 +16,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.ComponentScans;
 import org.springframework.core.env.Environment;
 import tech.jhipster.config.DefaultProfileUtil;
 import tech.jhipster.config.JHipsterConstants;
 
 @SpringBootApplication(exclude = { H2ConsoleAutoConfiguration.class })
 @EnableConfigurationProperties({ LiquibaseProperties.class, ApplicationProperties.class })
+@ComponentScan(basePackages = { "com.mycompany.sidebysidesample.gen", "com.mycompany.sidebysidesample" })
 public class SidebysidesampleApp {
 
     private static final Logger LOG = LoggerFactory.getLogger(SidebysidesampleApp.class);
