@@ -35,7 +35,7 @@ application {
   }
 service * with serviceImpl
 clientRootFolder * with gen
-dto Country with mapstruct // Any Entity where you only want to have CRUD operations on it
+dto * with mapstruct // DTO avoids Lazy loading issues
 ```
 5. generate the JDL project
    ```bash

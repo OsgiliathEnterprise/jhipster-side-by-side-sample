@@ -80,5 +80,5 @@ relationship ManyToMany {
 }
 
 service * with serviceImpl
-dto Country with mapstruct
+dto * with mapstruct
 clientRootFolder * with gen
