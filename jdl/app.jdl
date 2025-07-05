@@ -78,6 +78,7 @@ relationship ManyToOne {
 relationship ManyToMany {
   Job{task} to Task{job}
 }
-clientRootFolder gen
-service all with serviceImpl
+
+service * with serviceImpl
 dto Country with mapstruct
+clientRootFolder * with gen
