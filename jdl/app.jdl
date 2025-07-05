@@ -18,6 +18,7 @@ application {
     searchEngine no
     serverPort 8081
     testFrameworks [cypress]
+
   }
 
   entities Country, Department, Employee, Job, JobHistory, Location, Region, Task
@@ -77,5 +78,6 @@ relationship ManyToOne {
 relationship ManyToMany {
   Job{task} to Task{job}
 }
-
+clientRootFolder gen
+service all with serviceImpl
 dto Country with mapstruct
