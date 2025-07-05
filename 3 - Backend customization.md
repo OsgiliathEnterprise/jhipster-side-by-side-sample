@@ -4,7 +4,7 @@
 
 To customize the backend, you can extend or compose the existing generated backend. This allows you to add new functionality or modify existing behavior without changing the original codebase and keep generated code value.
 
-The goal here is to minimize the amount of modification to the generated code, and create your custom classes in a separate package. This way, you can regenerate the code without losing your customizations.
+The goal here is to minimize the amount of modification to the generated code, and create your custom classes in a separate package while maximizing the reuse of generated code. This way, you can regenerate the code without losing your customizations.
 
 ### How to extend the backend
 
@@ -36,3 +36,11 @@ See EmployeeWithDepartementService in the `com/mycompany/sidebysidesample/servic
 
 You can extend the generated code by creating a new class that extends the generated class. For example, if you have a generated service `com.example.project.gen.MyService`, you can create a new class `com.example.project.custom.MyCustomService` that extends it. inorder to avoid injection issues, you can use the `@Primary` annotation to indicate that this is the primary bean to be used when injecting the service.
 See EmployeeServiceExtension in the `com/mycompany/sidebysidesample/service` package for an example of how to extend the generated service.
+
+## Takeaways
+
+- You can customize the backend by extending or composing the generated code.
+- Create a new package to hold your custom code, and update the main application class to scan this package.
+- Use the `@ComponentScan` annotation to include your custom package in the Spring context.
+- Create separated tests for your custom code to ensure that it works correctly and do not interfere with the generated code.
+- Use the `.yo-resolve` file to ignore the main application class from regeneration.
