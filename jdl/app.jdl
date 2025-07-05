@@ -1,0 +1,81 @@
+application {
+  config {
+    applicationType monolith
+    authenticationType oauth2
+    baseName sidebysidesample
+    buildTool maven
+    cacheProvider caffeine
+    clientPackageManager npm
+    databaseType sql
+    devDatabaseType h2Disk
+    prodDatabaseType postgresql
+    enableHibernateCache true
+    enableSwaggerCodegen true
+    enableTranslation false
+    messageBroker no
+    nativeLanguage en
+    packageName com.mycompany.sidebysidesample.gen
+    searchEngine no
+    serverPort 8081
+    testFrameworks [cypress]
+  }
+
+  entities Country, Department, Employee, Job, JobHistory, Location, Region, Task
+}
+
+entity Country {
+  countryName String
+}
+entity Department {
+  departmentName String
+}
+entity Employee {
+  firstName String
+  lastName String
+  email String
+  phoneNumber String
+  hireDate ZonedDateTime
+  salary Long
+  commissionPct Long
+}
+entity Job {
+  jobTitle String
+  minSalary Long
+  maxSalary Long
+}
+entity JobHistory {
+  startDate ZonedDateTime
+  endDate ZonedDateTime
+}
+entity Location {
+  streetAddress String
+  postalCode String
+  city String
+  stateProvince String
+}
+entity Region {
+  regionName String
+}
+entity Task {
+  title String
+  description String
+}
+
+relationship OneToOne {
+  Country{region required} to Region
+  Department{location required} to Location
+  JobHistory{department required} to Department
+  JobHistory{job required} to Job
+  JobHistory{employee required} to Employee
+  Location{country required} to Country
+}
+relationship ManyToOne {
+  Employee{department} to Department{employee}
+  Employee{manager} to Employee
+  Job{employee} to Employee{job}
+}
+relationship ManyToMany {
+  Job{task} to Task{job}
+}
+
+dto Country with mapstruct
