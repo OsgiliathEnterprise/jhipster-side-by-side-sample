@@ -1,0 +1,17 @@
+{
+  "annotations": {
+    "changelogDate": "20250705101231"
+  },
+  "applications": ["sidebysidesample"],
+  "clientRootFolder": "gen",
+  "fields": [
+    {
+      "fieldName": "regionName",
+      "fieldType": "String"
+    }
+  ],
+  "name": "Region",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}
