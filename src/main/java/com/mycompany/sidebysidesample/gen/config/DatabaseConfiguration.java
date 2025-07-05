@@ -17,7 +17,7 @@ import tech.jhipster.config.JHipsterConstants;
 import tech.jhipster.config.h2.H2ConfigurationHelper;
 
 @Configuration
-@EnableJpaRepositories({ "com.mycompany.sidebysidesample.gen.repository" })
+@EnableJpaRepositories({ "com.mycompany.sidebysidesample.gen.repository", "com.mycompany.sidebysidesample.repository" })
 @EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")
 @EnableTransactionManagement
 @EnableConfigurationProperties(H2ConsoleProperties.class)

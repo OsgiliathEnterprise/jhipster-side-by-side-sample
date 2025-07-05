@@ -25,3 +25,14 @@ com.mycompany.sidebysidesample.Application skip
 ```
 
 Extends the current generated codebase with your own service, controllers, tests, etc. in the package you created. For example, see the `com/mycompany/sidebysidesample/service`. contribution.
+
+### How to compose the backend
+
+To compose the backend, you can create a new package and implement your own services, controllers, etc., without modifying the generated code. This is useful if you want to add new features or override existing functionality.
+Just inject the generated services into your custom services and override the methods you want to change. For example, you can create a new service that extends the generated service and overrides the methods you want to change.
+See EmployeeWithDepartementService in the `com/mycompany/sidebysidesample/service` package for an example of how to compose the backend.
+
+### By Extension
+
+You can extend the generated code by creating a new class that extends the generated class. For example, if you have a generated service `com.example.project.gen.MyService`, you can create a new class `com.example.project.custom.MyCustomService` that extends it. inorder to avoid injection issues, you can use the `@Primary` annotation to indicate that this is the primary bean to be used when injecting the service.
+See EmployeeServiceExtension in the `com/mycompany/sidebysidesample/service` package for an example of how to extend the generated service.
