@@ -1,2 +1,3 @@
 src/main/java/com/mycompany/sidebysidesample/gen/SidebysidesampleApp.java skip
 src/main/java/com/mycompany/sidebysidesample/gen/config/DatabaseConfiguration.java skip
+src/main/webapp/app/app.routes.ts skip
